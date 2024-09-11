@@ -1,10 +1,10 @@
 /**
  * @module RPC-API-Methods
- * copyright defined in eosjs/LICENSE.txt
+ * copyright defined in wirejs/LICENSE.txt
  */
 
-import { TransactionReceiptHeader, TransactionTrace } from './eosjs-api-interfaces';
-import { Authorization } from './eosjs-serialize';
+import { TransactionReceiptHeader, TransactionTrace } from './wirejs-api-interfaces';
+import { Authorization } from './wirejs-serialize';
 
 /** Structured format for abis */
 export interface Abi {
@@ -214,7 +214,7 @@ export interface GetBlockInfoResult {
     ref_block_prefix: number;
 }
 
-/** Returned action from nodeos, data is optional */
+/** Returned action from nodeop, data is optional */
 export interface ProcessedAction {
     account: string;
     name: string;

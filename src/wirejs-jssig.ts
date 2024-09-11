@@ -1,18 +1,18 @@
 /**
  * @module JS-Sig
  */
-// copyright defined in eosjs/LICENSE.txt
+// copyright defined in wirejs/LICENSE.txt
 
 import { ec } from 'elliptic';
 
-import { SignatureProvider, SignatureProviderArgs } from './eosjs-api-interfaces';
-import { PushTransactionArgs } from './eosjs-rpc-interfaces';
+import { SignatureProvider, SignatureProviderArgs } from './wirejs-api-interfaces';
+import { PushTransactionArgs } from './wirejs-rpc-interfaces';
 import {
     PrivateKey,
     PublicKey,
     Signature,
-} from './eosjs-key-conversions';
-import { convertLegacyPublicKey } from './eosjs-numeric';
+} from './wirejs-key-conversions';
+import { convertLegacyPublicKey } from './wirejs-numeric';
 
 /** expensive to construct; so we do it once and reuse it */
 const defaultEc = new ec('secp256k1');

@@ -1,17 +1,11 @@
 {
-  "name": "eosjs",
+  "name": "wirejs-native",
   "version": "22.1.0",
-  "description": "Talk to eos API",
+  "description": "Talk to Wire API",
   "main": "dist/index.js",
   "scripts": {
-    "cypress": "cypress run --spec 'cypress/integration/index.spec.js'",
-    "cypress-ui": "cypress open",
     "prepare": "npm run build",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
-    "test": "jest src/tests/*eosjs*",
-    "test-node": "jest src/tests/*node*",
-    "test-types": "jest src/tests/type-checks.test.ts",
-    "test-all": "yarn test && yarn test-node && yarn test-types && yarn cypress",
     "build": "rimraf dist && tsc -p ./tsconfig.json && node scripts/copy-ripe-md.js",
     "build-web": "webpack --config webpack.prod.js && webpack --config webpack.debug.js",
     "build-production": "yarn build && yarn build-web && yarn test-all",
@@ -24,7 +18,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/EOSIO/eosjs.git"
+    "url": "https://github.com/Wire-Network/wirejs-native.git"
   },
   "dependencies": {
     "bn.js": "5.2.0",
@@ -33,8 +27,6 @@
     "pako": "2.0.3"
   },
   "devDependencies": {
-    "@blockone/eslint-config-blockone": "^4.0.1",
-    "@cypress/skip-test": "^2.6.1",
     "@types/elliptic": "^6.4.13",
     "@types/jest": "^26.0.24",
     "@types/node": "^14.17.5",
@@ -44,7 +36,6 @@
     "clean-webpack-plugin": "^3.0.0",
     "crypto-browserify": "^3.12.0",
     "cypress": "^7.7.0",
-    "eosjs-ecc": "^4.0.7",
     "eslint": "^7.30.0",
     "jest": "^26.6.3",
     "jest-extended": "^0.11.5",
@@ -55,29 +46,5 @@
     "typescript": "^4.3.5",
     "webpack": "^5.44.0",
     "webpack-cli": "^4.7.2"
-  },
-  "jest": {
-    "automock": false,
-    "setupFiles": [
-      "./src/tests/setupJest.js"
-    ],
-    "setupFilesAfterEnv": [
-      "jest-extended"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.(tsx?)$": "ts-jest"
-    },
-    "globals": {
-      "ts-jest": {
-        "tsconfig": "tsconfig.json"
-      }
-    },
-    "testRegex": "(/src/.*(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "testEnvironment": "node"
   }
 }

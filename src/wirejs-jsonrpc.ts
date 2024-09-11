@@ -1,10 +1,10 @@
 /**
  * @module JSON-RPC
  */
-// copyright defined in eosjs/LICENSE.txt
+// copyright defined in wirejs/LICENSE.txt
 
-import { AbiProvider, AuthorityProvider, AuthorityProviderArgs, BinaryAbi, TransactResult } from './eosjs-api-interfaces';
-import { base64ToBinary, convertLegacyPublicKeys } from './eosjs-numeric';
+import { AbiProvider, AuthorityProvider, AuthorityProviderArgs, BinaryAbi, TransactResult } from './wirejs-api-interfaces';
+import { base64ToBinary, convertLegacyPublicKeys } from './wirejs-numeric';
 import {
     AbiBinToJsonResult,
     AbiJsonToBinResult,
@@ -36,9 +36,9 @@ import {
     GetTransactionResult,
     GetKeyAccountsResult,
     GetControlledAccountsResult,
-} from './eosjs-rpc-interfaces';
-import { Authorization } from './eosjs-serialize';
-import { RpcError } from './eosjs-rpcerror';
+} from './wirejs-rpc-interfaces';
+import { Authorization } from './wirejs-serialize';
+import { RpcError } from './wirejs-rpcerror';
 
 const arrayToHex = (data: Uint8Array): string => {
     let result = '';

@@ -6,14 +6,14 @@ import {
     KeyType,
     signatureToString,
     stringToSignature,
-} from './eosjs-numeric';
-import { constructElliptic, PublicKey } from './eosjs-key-conversions';
+} from './wirejs-numeric';
+import { constructElliptic, PublicKey } from './wirejs-key-conversions';
 
 /** Represents/stores a Signature and provides easy conversion for use with `elliptic` lib */
 export class Signature {
     constructor(private signature: Key, private ec: EC) {}
 
-    /** Instantiate Signature from an EOSIO-format Signature */
+    /** Instantiate Signature from an WIREIO-format Signature */
     public static fromString(sig: string, ec?: EC): Signature {
         const signature = stringToSignature(sig);
         if (!ec) {
@@ -26,16 +26,16 @@ export class Signature {
     public static fromElliptic(ellipticSig: EC.Signature, keyType: KeyType, ec?: EC): Signature {
         const r = ellipticSig.r.toArray('be', 32);
         const s = ellipticSig.s.toArray('be', 32);
-        let eosioRecoveryParam;
+        let wireioRecoveryParam;
         if (keyType === KeyType.k1 || keyType === KeyType.r1) {
-            eosioRecoveryParam = ellipticSig.recoveryParam + 27;
+            wireioRecoveryParam = ellipticSig.recoveryParam + 27;
             if (ellipticSig.recoveryParam <= 3) {
-                eosioRecoveryParam += 4;
+                wireioRecoveryParam += 4;
             }
         } else if (keyType === KeyType.wa) {
-            eosioRecoveryParam = ellipticSig.recoveryParam;
+            wireioRecoveryParam = ellipticSig.recoveryParam;
         }
-        const sigData = new Uint8Array([eosioRecoveryParam].concat(r, s));
+        const sigData = new Uint8Array([wireioRecoveryParam].concat(r, s));
         if (!ec) {
             ec = constructElliptic(keyType);
         }
@@ -70,7 +70,7 @@ export class Signature {
         return { r, s, recoveryParam };
     }
 
-    /** Export Signature as EOSIO-format Signature */
+    /** Export Signature as WIREIO-format Signature */
     public toString(): string {
         return signatureToString(this.signature);
     }

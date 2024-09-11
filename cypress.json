@@ -1,7 +1,0 @@
-{
-  "video": true,
-  "fixturesFolder": false,
-  "pluginsFile": false,
-  "supportFile": false,
-  "userAgent": "Chrome cypress"
-}

@@ -8,7 +8,3 @@ docs-build/
 *.tgz
 .github/**/*.wasm
 .github/**/*.abi
-
-#cypress artifacts
-cypress/screenshots/
-cypress/videos/

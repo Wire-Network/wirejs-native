@@ -1,7 +1,7 @@
 /**
  * @module RPC-Error
  */
-// copyright defined in eosjs/LICENSE.txt
+// copyright defined in wirejs/LICENSE.txt
 
 /** Holds detailed error information */
 export class RpcError extends Error {

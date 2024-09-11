@@ -5,14 +5,14 @@ import {
     publicKeyToLegacyString,
     publicKeyToString,
     stringToPublicKey,
-} from './eosjs-numeric';
-import { constructElliptic } from './eosjs-key-conversions';
+} from './wirejs-numeric';
+import { constructElliptic } from './wirejs-key-conversions';
 
 /** Represents/stores a public key and provides easy conversion for use with `elliptic` lib */
 export class PublicKey {
     constructor(private key: Key, private ec: EC) {}
 
-    /** Instantiate public key from an EOSIO-format public key */
+    /** Instantiate public key from an WIREIO-format public key */
     public static fromString(publicKeyStr: string, ec?: EC): PublicKey {
         const key = stringToPublicKey(publicKeyStr);
         if (!ec) {
@@ -34,12 +34,12 @@ export class PublicKey {
         }, ec);
     }
 
-    /** Export public key as EOSIO-format public key */
+    /** Export public key as WIREIO-format public key */
     public toString(): string {
         return publicKeyToString(this.key);
     }
 
-    /** Export public key as Legacy EOSIO-format public key */
+    /** Export public key as Legacy WIREIO-format public key */
     public toLegacyString(): string {
         return publicKeyToLegacyString(this.key);
     }

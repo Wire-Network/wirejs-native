@@ -3,10 +3,10 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: {
-        eosjs_api: './src/eosjs-api.ts',
-        eosjs_jsonrpc: './src/rpc-web.ts',
-        eosjs_jssig: './src/eosjs-jssig.ts',
-        eosjs_numeric: './src/eosjs-numeric.ts',
+        wirejs_api: './src/wirejs-api.ts',
+        wirejs_jsonrpc: './src/rpc-web.ts',
+        wirejs_jssig: './src/wirejs-jssig.ts',
+        wirejs_numeric: './src/wirejs-numeric.ts',
     },
     devtool: 'inline-source-map',
     mode: 'development',

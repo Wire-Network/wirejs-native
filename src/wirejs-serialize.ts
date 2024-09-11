@@ -1,14 +1,14 @@
 /**
  * @module Serialize
  */
-// copyright defined in eosjs/LICENSE.txt
+// copyright defined in wirejs/LICENSE.txt
 /* eslint-disable max-classes-per-file */
 /* eslint-disable jsdoc/check-indentation */
 
-import * as numeric from './eosjs-numeric';
-import { TransactionHeader } from './eosjs-api-interfaces';
-import { Abi, BlockTaposInfo } from './eosjs-rpc-interfaces';
-import { Query } from './eosjs-api-interfaces';
+import * as numeric from './wirejs-numeric';
+import { TransactionHeader } from './wirejs-api-interfaces';
+import { Abi, BlockTaposInfo } from './wirejs-rpc-interfaces';
+import { Query } from './wirejs-api-interfaces';
 
 /** A field in an abi */
 export interface Field {
@@ -51,7 +51,7 @@ export class SerializerState {
  *      * value:
  *          * If type === 'any_object', then value is an object. The values within the object are anyvar.
  *          * If type === 'any_array', then value is an array of anyvar.
- *          * Else, value must be eosjs-compatible with the specified type (e.g. uint64 should be a string
+ *          * Else, value must be wirejs-compatible with the specified type (e.g. uint64 should be a string
  *            containing the value in decimal).
  *  * Other object. The values within the object are anyvar.
  *
@@ -592,7 +592,7 @@ export class SerialBuffer {
 
 /** Is this a supported ABI version? */
 export const supportedAbiVersion = (version: string): boolean => {
-    return version.startsWith('eosio::abi/1.');
+    return version.startsWith('sysio::abi/1.');
 };
 
 const checkDateParse = (date: string): number => {

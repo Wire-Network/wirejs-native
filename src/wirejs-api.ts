@@ -1,7 +1,7 @@
 /**
  * @module API
  */
-// copyright defined in eosjs/LICENSE.txt
+// copyright defined in wirejs/LICENSE.txt
 /* eslint-disable max-classes-per-file */
 
 import { inflate, deflate } from 'pako';
@@ -19,8 +19,8 @@ import {
     TransactConfig,
     Transaction,
     TransactResult,
-} from './eosjs-api-interfaces';
-import { JsonRpc } from './eosjs-jsonrpc';
+} from './wirejs-api-interfaces';
+import { JsonRpc } from './wirejs-jsonrpc';
 import {
     Abi,
     BlockTaposInfo,
@@ -30,8 +30,8 @@ import {
     GetBlockInfoResult,
     GetBlockResult,
     ReadOnlyTransactResult,
-} from './eosjs-rpc-interfaces';
-import * as ser from './eosjs-serialize';
+} from './wirejs-rpc-interfaces';
+import * as ser from './wirejs-serialize';
 
 export class Api {
     /** Issues RPC calls */

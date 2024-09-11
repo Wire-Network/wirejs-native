@@ -1,10 +1,10 @@
 /**
  * @module Javascript-API
- * copyright defined in eosjs/LICENSE.txt
+ * copyright defined in wirejs/LICENSE.txt
  */
 
-import { Abi, PushTransactionArgs, ProcessedAction } from './eosjs-rpc-interfaces';
-import { Anyvar, Authorization, Action, SerializedAction } from './eosjs-serialize';
+import { Abi, PushTransactionArgs, ProcessedAction } from './wirejs-rpc-interfaces';
+import { Anyvar, Authorization, Action, SerializedAction } from './wirejs-serialize';
 
 /** Arguments to `getRequiredKeys` */
 export interface AuthorityProviderArgs {

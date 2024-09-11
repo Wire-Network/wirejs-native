@@ -1,12 +1,12 @@
 /**
  * @module WebAuthn-Sig
  */
-// copyright defined in eosjs/LICENSE.txt
+// copyright defined in wirejs/LICENSE.txt
 
-import { SignatureProvider, SignatureProviderArgs } from './eosjs-api-interfaces';
-import { PushTransactionArgs } from './eosjs-rpc-interfaces';
-import * as ser from './eosjs-serialize';
-import * as numeric from './eosjs-numeric';
+import { SignatureProvider, SignatureProviderArgs } from './wirejs-api-interfaces';
+import { PushTransactionArgs } from './wirejs-rpc-interfaces';
+import * as ser from './wirejs-serialize';
+import * as numeric from './wirejs-numeric';
 import { ec } from 'elliptic';
 
 /** Signs transactions using WebAuthn */
