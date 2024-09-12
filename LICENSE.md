@@ -1,4 +1,4 @@
-Wire Network<br/>
+Wire Network/wirejs-native<br/>
 Copyright (c) 2024 WIRE NETWORK, INC. and its contributors. All Rights Reserved.
 This software is owned and created by Wire Network, but it builds upon EOSIO/eosjs.
 
