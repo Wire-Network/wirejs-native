@@ -1419,6 +1419,40 @@ export const createInitialTypes = (): Map<string, Type> => {
           return arrayToHex(buffer.getUint8Array(64));
         },
       }),
+      bitset: createType({
+        name: "bitset",
+        serialize: (buffer: SerialBuffer, data: string) => {
+          const numBits = data.length;
+          buffer.pushVaruint32(numBits);
+          if (numBits === 0) return;
+          const numBytes = Math.ceil(numBits / 8);
+          for (let byteIdx = 0; byteIdx < numBytes; byteIdx++) {
+            let byte = 0;
+            for (let bitIdx = 0; bitIdx < 8; bitIdx++) {
+              const bitPos = byteIdx * 8 + bitIdx;
+              if (bitPos < numBits) {
+                const charIdx = numBits - bitPos - 1;
+                if (data[charIdx] === "1") { byte |= 1 << bitIdx; }
+              }
+            }
+            buffer.push(byte);
+          }
+        },
+        deserialize: (buffer: SerialBuffer) => {
+          const numBits = buffer.getVaruint32();
+          if (numBits === 0) return "";
+          const numBytes = Math.ceil(numBits / 8);
+          const bytes: number[] = [];
+          for (let i = 0; i < numBytes; i++) { bytes.push(buffer.get()); }
+          let result = "";
+          for (let i = numBits - 1; i >= 0; i--) {
+            const byteIdx = Math.floor(i / 8);
+            const bitIdx = i % 8;
+            result += bytes[byteIdx] & (1 << bitIdx) ? "1" : "0";
+          }
+          return result;
+        },
+      }),
       public_key: createType({
         name: "public_key",
         serialize: (buffer: SerialBuffer, data: string) => {
