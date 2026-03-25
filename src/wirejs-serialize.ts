@@ -742,12 +742,12 @@ export const timePointSecToDate = (sec: number): string => {
 
 /** Convert date in ISO format to `block_timestamp_type` (half-seconds since a different epoch) */
 export const dateToBlockTimestamp = (date: string): number => {
-  return Math.round((checkDateParse(date + "Z") - 946684800000) / 500);
+  return Math.round((checkDateParse(date + "Z") - 1735689600000) / 500);
 };
 
 /** Convert `block_timestamp_type` (half-seconds since a different epoch) to to date in ISO format */
 export const blockTimestampToDate = (slot: number): string => {
-  const s = new Date(slot * 500 + 946684800000).toISOString();
+  const s = new Date(slot * 500 + 1735689600000).toISOString();
   return s.substr(0, s.length - 1);
 };
 
