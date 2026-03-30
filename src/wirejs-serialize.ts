@@ -1934,6 +1934,40 @@ export const getTypesFromAbi = (
     }
   }
 
+  if (abi && abi.enums) {
+    for (const { name, type: underlyingTypeName, values } of abi.enums) {
+      const underlyingType = getType(types, underlyingTypeName);
+      types.set(
+        name,
+        createType({
+          name,
+          serialize: (buffer: SerialBuffer, data: string | number) => {
+            let numVal: number;
+            if (typeof data === "string") {
+              const entry = values.find((v) => v.name === data);
+              if (entry !== undefined) {
+                numVal = entry.value;
+              } else {
+                numVal = +data;
+                if (Number.isNaN(numVal)) {
+                  throw new Error(`Unknown enum value: ${data}`);
+                }
+              }
+            } else {
+              numVal = data;
+            }
+            underlyingType.serialize(buffer, numVal);
+          },
+          deserialize: (buffer: SerialBuffer) => {
+            const numVal = underlyingType.deserialize(buffer);
+            const entry = values.find((v) => v.value === +numVal);
+            return entry ? entry.name : String(numVal);
+          },
+        }),
+      );
+    }
+  }
+
   for (const [name, type] of types) {
     if (type.baseName) {
       type.base = getType(types, type.baseName);
