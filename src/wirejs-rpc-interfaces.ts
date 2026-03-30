@@ -30,6 +30,7 @@ export interface Abi {
   error_messages: { error_code: number; error_msg: string }[];
   abi_extensions: { tag: number; value: string }[];
   variants?: { name: string; types: string[] }[];
+  enums?: { name: string; type: string; values: { name: string; value: number }[] }[];
   action_results?: { name: string; result_type: string }[];
   kv_tables?: {
     [key: string]: {
