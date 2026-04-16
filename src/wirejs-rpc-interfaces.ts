@@ -25,6 +25,10 @@ export interface Abi {
     index_type: string;
     key_names: string[];
     key_types: string[];
+    /** DJB2(name) % 65536; namespace slot for KV tables (wire-sysio PR #288). */
+    table_id?: number;
+    /** Per-secondary-index metadata; each entry has its own table_id. */
+    secondary_indexes?: { name: string; key_type: string; table_id: number }[];
   }[];
   ricardian_clauses: { id: string; body: string }[];
   error_messages: { error_code: number; error_msg: string }[];
@@ -32,13 +36,8 @@ export interface Abi {
   variants?: { name: string; types: string[] }[];
   enums?: { name: string; type: string; values: { name: string; value: number }[] }[];
   action_results?: { name: string; result_type: string }[];
-  kv_tables?: {
-    [key: string]: {
-      type: string;
-      primary_index: { name: string; type: string };
-      secondary_indices: { [key: string]: { type: string } }[];
-    };
-  }[];
+  /** Protobuf FileDescriptorSet serialized as a JSON string (may_not_exist on chain side). */
+  protobuf_types?: string;
 }
 
 export interface BlockHeader {
