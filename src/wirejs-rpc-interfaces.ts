@@ -34,6 +34,12 @@ export interface Abi {
   error_messages: { error_code: number; error_msg: string }[];
   abi_extensions: { tag: number; value: string }[];
   variants?: { name: string; types: string[] }[];
+  /**
+   * Enum value is `int64_t` on the chain side but typed here as `number`. TypeScript `number`
+   * is a 64-bit float with exact integer range [-2^53, 2^53]; values beyond that would silently
+   * lose precision. Safe for all expected enum values, which are small integers by convention.
+   * Switch to `bigint` if larger enum values ever become necessary.
+   */
   enums?: { name: string; type: string; values: { name: string; value: number }[] }[];
   action_results?: { name: string; result_type: string }[];
   /** Protobuf FileDescriptorSet serialized as a JSON string (may_not_exist on chain side). */
