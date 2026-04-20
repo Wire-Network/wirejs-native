@@ -296,61 +296,42 @@ export class JsonRpc implements AuthorityProvider, AbiProvider {
     });
   }
 
-  /** Raw call to `/v1/chain/get_table_rows` */
+  /**
+   * Raw call to `/v1/chain/get_table_rows`.
+   *
+   * Wire-sysio PR #290 unified the legacy `get_table_rows` and `get_kv_table_rows`
+   * endpoints into a single API. `scope` is optional (empty = unscoped); `find`
+   * performs an exact-key lookup (cannot combine with bounds); `index_name` selects
+   * a secondary index by name or numeric position. Legacy `index_position` and
+   * `key_type` are removed — the ABI drives type resolution now.
+   */
   public async get_table_rows({
     json = true,
     code,
-    scope,
     table,
+    scope = "",
+    find = "",
+    index_name = "",
     lower_bound = "",
     upper_bound = "",
-    index_position = 1,
-    key_type = "",
-    limit = 10,
+    limit = 50,
     reverse = false,
     show_payer = false,
+    time_limit_ms,
   }: any): Promise<GetTableRowsResult> {
     return await this.fetch("/v1/chain/get_table_rows", {
       json,
       code,
+      table,
       scope,
-      table,
-      lower_bound,
-      upper_bound,
-      index_position,
-      key_type,
-      limit,
-      reverse,
-      show_payer,
-    });
-  }
-
-  /** Raw call to `/v1/chain/get_kv_table_rows` */
-  public async get_kv_table_rows({
-    json = true,
-    code,
-    table,
-    index_name,
-    encode_type = "bytes",
-    index_value,
-    lower_bound,
-    upper_bound,
-    limit = 10,
-    reverse = false,
-    show_payer = false,
-  }: any): Promise<GetTableRowsResult> {
-    return await this.fetch("/v1/chain/get_kv_table_rows", {
-      json,
-      code,
-      table,
+      find,
       index_name,
-      encode_type,
-      index_value,
       lower_bound,
       upper_bound,
       limit,
       reverse,
       show_payer,
+      time_limit_ms,
     });
   }
 

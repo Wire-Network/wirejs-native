@@ -25,9 +25,16 @@ export interface Abi {
     index_type: string;
     key_names: string[];
     key_types: string[];
-    /** DJB2(name) % 65536; namespace slot for KV tables (wire-sysio PR #288). */
+    /**
+     * DJB2(name) % 65536; namespace slot for KV tables (wire-sysio PR #288).
+     * Optional on this interface for forward-compat with JSON payloads from older
+     * nodes, but REQUIRED by the binary serializer: callers constructing a
+     * `table_def` for `createAbiTypes()` round-trip against a wire-sysio post-#288
+     * node MUST provide `table_id` and `secondary_indexes` or binary encoding will
+     * fail / produce a malformed ABI.
+     */
     table_id?: number;
-    /** Per-secondary-index metadata; each entry has its own table_id. */
+    /** Per-secondary-index metadata; each entry has its own table_id. Required for binary round-trip; see `table_id`. */
     secondary_indexes?: { name: string; key_type: string; table_id: number }[];
   }[];
   ricardian_clauses: { id: string; body: string }[];
@@ -495,12 +502,17 @@ export interface GetScheduledTransactionsResult {
   more: string;
 }
 
-/** Return value of `/v1/chain/get_table_rows` and `/v1/chain/get_kv_table_rows` */
+/**
+ * Return value of `/v1/chain/get_table_rows`.
+ *
+ * Wire-sysio PR #290 unified the legacy `get_table_rows` and `get_kv_table_rows`
+ * endpoints; `next_key_bytes` (legacy hex pagination token) was dropped — use
+ * `next_key` as the pagination token for both legacy and KV tables.
+ */
 export interface GetTableRowsResult {
   rows: any[];
   more: boolean;
   next_key: string;
-  next_key_bytes: string;
 }
 
 export interface GetTableByScopeResultRow {
