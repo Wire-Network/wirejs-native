@@ -1569,17 +1569,53 @@ export const createAbiTypes = (): Map<string, Type> => {
       deserialize: deserializeStruct,
     }),
   );
+  // Per-secondary-index metadata embedded in table_def. Mirrors
+  // sysio::chain::index_def in libraries/chain/include/sysio/chain/abi_def.hpp:
+  //   struct index_def { string name; string key_type; uint16_t table_id = 0; };
+  //   FC_REFLECT( sysio::chain::index_def, (name)(key_type)(table_id) )
+  // Field order and types below must match that reflection exactly.
+  //
+  // Note: this `table_id` is the hash identifier for THIS secondary index,
+  // not the parent table's table_id. Each secondary index gets its own
+  // DJB2(index_name) % 65536 slot so chain-side lookups can address it.
+  initialTypes.set(
+    "index_def",
+    createType({
+      name: "index_def",
+      baseName: "",
+      fields: [
+        { name: "name", typeName: "string", type: null },
+        { name: "key_type", typeName: "string", type: null },
+        { name: "table_id", typeName: "uint16", type: null },
+      ],
+      serialize: serializeStruct,
+      deserialize: deserializeStruct,
+    }),
+  );
+  // table_def mirrors sysio::chain::table_def in
+  // libraries/chain/include/sysio/chain/abi_def.hpp:
+  //   FC_REFLECT( sysio::chain::table_def,
+  //               (name)(index_type)(key_names)(key_types)(type)(table_id)(secondary_indexes) )
+  // Wire-sysio PR #288 widened `name` from sysio::name (uint64) to a free-form
+  // std::string so long table names work, and appended `table_id` (uint16,
+  // DJB2 hash of the table name % 65536) and `secondary_indexes`. All prior
+  // fields (index_type, key_names, key_types, type) are retained in the same
+  // order. The binary wire format break means this struct must mirror the
+  // chain side exactly or every field after `tables` in abi_def parses
+  // misaligned.
   initialTypes.set(
     "table_def",
     createType({
       name: "table_def",
       baseName: "",
       fields: [
-        { name: "name", typeName: "name", type: null },
+        { name: "name", typeName: "string", type: null },
         { name: "index_type", typeName: "string", type: null },
         { name: "key_names", typeName: "string[]", type: null },
         { name: "key_types", typeName: "string[]", type: null },
         { name: "type", typeName: "string", type: null },
+        { name: "table_id", typeName: "uint16", type: null },
+        { name: "secondary_indexes", typeName: "index_def[]", type: null },
       ],
       serialize: serializeStruct,
       deserialize: deserializeStruct,
@@ -1637,85 +1673,56 @@ export const createAbiTypes = (): Map<string, Type> => {
       deserialize: deserializeStruct,
     }),
   );
+  // Enum type definitions matching wire-sysio's sysio::chain::enum_def /
+  // enum_value_def in libraries/chain/include/sysio/chain/abi_def.hpp:
+  //   struct enum_value_def { string name; int64_t value; };
+  //   struct enum_def { type_name name; type_name type; vector<enum_value_def> values; };
+  //   FC_REFLECT( sysio::chain::enum_value_def, (name)(value) )
+  //   FC_REFLECT( sysio::chain::enum_def, (name)(type)(values) )
+  // `value` is int64_t on the chain side.
+  // Required for binary deserialization of contract ABIs that use enum
+  // fields and for the enum support added in PR #3.
   initialTypes.set(
-    "primary_key_index_def",
+    "enum_value_def",
     createType({
-      name: "primary_key_index_def",
+      name: "enum_value_def",
       baseName: "",
       fields: [
-        { name: "name", typeName: "name", type: null },
+        { name: "name", typeName: "string", type: null },
+        { name: "value", typeName: "int64", type: null },
+      ],
+      serialize: serializeStruct,
+      deserialize: deserializeStruct,
+    }),
+  );
+  initialTypes.set(
+    "enum_def",
+    createType({
+      name: "enum_def",
+      baseName: "",
+      fields: [
+        { name: "name", typeName: "string", type: null },
         { name: "type", typeName: "string", type: null },
+        { name: "values", typeName: "enum_value_def[]", type: null },
       ],
       serialize: serializeStruct,
       deserialize: deserializeStruct,
     }),
   );
-  initialTypes.set(
-    "secondary_index_def",
-    createType({
-      name: "secondary_index_def",
-      baseName: "",
-      fields: [{ name: "type", typeName: "string", type: null }],
-      serialize: serializeStruct,
-      deserialize: deserializeStruct,
-    }),
-  );
-  initialTypes.set(
-    "secondary_indices",
-    createType({
-      name: "secondary_indices",
-      baseName: "",
-      fields: [
-        { name: "name", typeName: "name", type: null },
-        {
-          name: "secondary_index_def",
-          typeName: "secondary_index_def",
-          type: null,
-        },
-      ],
-      serialize: serializeObject,
-      deserialize: deserializeObject,
-    }),
-  );
-  initialTypes.set(
-    "kv_table_entry_def",
-    createType({
-      name: "kv_table_entry_def",
-      baseName: "",
-      fields: [
-        { name: "type", typeName: "string", type: null },
-        {
-          name: "primary_index",
-          typeName: "primary_key_index_def",
-          type: null,
-        },
-        {
-          name: "secondary_indices",
-          typeName: "secondary_indices",
-          type: null,
-        },
-      ],
-      serialize: serializeStruct,
-      deserialize: deserializeStruct,
-    }),
-  );
-  initialTypes.set(
-    "kv_table",
-    createType({
-      name: "kv_table",
-      baseName: "",
-      fields: [
-        { name: "name", typeName: "name", type: null },
-        {
-          name: "kv_table_entry_def",
-          typeName: "kv_table_entry_def",
-          type: null,
-        },
-      ],
-      serialize: serializeObject,
-      deserialize: deserializeObject,
-    }),
-  );
+  // abi_def matches sysio::chain::abi_def in libraries/chain/include/sysio/chain/abi_def.hpp:
+  //   FC_REFLECT( sysio::chain::abi_def,
+  //               (version)(types)(structs)(actions)(tables)
+  //               (ricardian_clauses)(error_messages)(abi_extensions)
+  //               (variants)(action_results)(enums)(protobuf_types) )
+  // The last four (variants, action_results, enums, protobuf_types) use
+  // may_not_exist<T> on the chain side, i.e. binary extensions — hence the
+  // `$` suffix here. `protobuf_types` is a bare may_not_exist<string>
+  // (FileDescriptorSet serialized as a JSON string), which is why `string$`
+  // is the correct wire typeName, not a vector.
+  //
+  // The legacy `kv_tables$` extension was for EOSIO's old kv_table proposal —
+  // unrelated to wire-sysio's kv::table — and is removed because the wire
+  // stream now contains `enums` then `protobuf_types` at that position.
   initialTypes.set(
     "abi_def",
     createType({
@@ -1732,7 +1739,8 @@ export const createAbiTypes = (): Map<string, Type> => {
         { name: "abi_extensions", typeName: "extensions_entry[]", type: null },
         { name: "variants", typeName: "variant_def[]$", type: null },
         { name: "action_results", typeName: "action_result[]$", type: null },
-        { name: "kv_tables", typeName: "kv_table$", type: null },
+        { name: "enums", typeName: "enum_def[]$", type: null },
+        { name: "protobuf_types", typeName: "string$", type: null },
       ],
       serialize: serializeStruct,
       deserialize: deserializeStruct,

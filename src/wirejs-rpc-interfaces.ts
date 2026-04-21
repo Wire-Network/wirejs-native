@@ -25,20 +25,32 @@ export interface Abi {
     index_type: string;
     key_names: string[];
     key_types: string[];
+    /**
+     * DJB2(name) % 65536; namespace slot for KV tables (wire-sysio PR #288).
+     * Optional on this interface for forward-compat with JSON payloads from older
+     * nodes, but REQUIRED by the binary serializer: callers constructing a
+     * `table_def` for `createAbiTypes()` round-trip against a wire-sysio post-#288
+     * node MUST provide `table_id` and `secondary_indexes` or binary encoding will
+     * fail / produce a malformed ABI.
+     */
+    table_id?: number;
+    /** Per-secondary-index metadata; each entry has its own table_id. Required for binary round-trip; see `table_id`. */
+    secondary_indexes?: { name: string; key_type: string; table_id: number }[];
   }[];
   ricardian_clauses: { id: string; body: string }[];
   error_messages: { error_code: number; error_msg: string }[];
   abi_extensions: { tag: number; value: string }[];
   variants?: { name: string; types: string[] }[];
+  /**
+   * Enum value is `int64_t` on the chain side but typed here as `number`. TypeScript `number`
+   * is a 64-bit float with exact integer range [-2^53, 2^53]; values beyond that would silently
+   * lose precision. Safe for all expected enum values, which are small integers by convention.
+   * Switch to `bigint` if larger enum values ever become necessary.
+   */
   enums?: { name: string; type: string; values: { name: string; value: number }[] }[];
   action_results?: { name: string; result_type: string }[];
-  kv_tables?: {
-    [key: string]: {
-      type: string;
-      primary_index: { name: string; type: string };
-      secondary_indices: { [key: string]: { type: string } }[];
-    };
-  }[];
+  /** Protobuf FileDescriptorSet serialized as a JSON string (may_not_exist on chain side). */
+  protobuf_types?: string;
 }
 
 export interface BlockHeader {
@@ -490,12 +502,17 @@ export interface GetScheduledTransactionsResult {
   more: string;
 }
 
-/** Return value of `/v1/chain/get_table_rows` and `/v1/chain/get_kv_table_rows` */
+/**
+ * Return value of `/v1/chain/get_table_rows`.
+ *
+ * Wire-sysio PR #290 unified the legacy `get_table_rows` and `get_kv_table_rows`
+ * endpoints; `next_key_bytes` (legacy hex pagination token) was dropped — use
+ * `next_key` as the pagination token for both legacy and KV tables.
+ */
 export interface GetTableRowsResult {
   rows: any[];
   more: boolean;
   next_key: string;
-  next_key_bytes: string;
 }
 
 export interface GetTableByScopeResultRow {
